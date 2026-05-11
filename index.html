@@ -1,19 +1,29 @@
-<button id="showMyPassword" style="position:fixed; bottom:10px; left:10px; background:orange; color:white; padding:8px 12px; border-radius:50px; font-size:12px; z-index:9999;">
-    🔑 اعرض كلمة سري
+<button id="fixAdminPassword" style="position:fixed; bottom:10px; left:10px; background:red; color:white; padding:10px 15px; border-radius:50px; font-size:12px; z-index:9999; font-weight:bold;">
+    🔧 إصلاح حساب المدير (إضافة كلمة السر)
 </button>
 
 <script>
-document.getElementById('showMyPassword')?.addEventListener('click', async () => {
+document.getElementById('fixAdminPassword')?.addEventListener('click', async () => {
     try {
-        const snapshot = await firebase.database().ref('users/01022495795').once('value');
-        const user = snapshot.val();
-        if(user) {
-            alert(`📱 رقمك: 01022495795\n🔑 كلمة السر: ${user.password}\n👤 اسمك: ${user.name}`);
-        } else {
-            alert("❌ لا يوجد حساب بهذا الرقم");
-        }
+        const adminPhone = "01022495795";
+        
+        // إضافة كلمة السر للحساب
+        await firebase.database().ref(`users/${adminPhone}/password`).set("010224");
+        
+        // التأكد من وجود باقي البيانات
+        await firebase.database().ref(`users/${adminPhone}/name`).set("المدير العام");
+        await firebase.database().ref(`users/${adminPhone}/storeName`).set("مملكة التجار");
+        await firebase.database().ref(`users/${adminPhone}/active`).set(true);
+        await firebase.database().ref(`users/${adminPhone}/isAdmin`).set(true);
+        
+        alert(`✅ تم إصلاح حساب المدير بنجاح!\n\n📱 الرقم: ${adminPhone}\n🔑 كلمة السر: 010224\n\nيمكنك الآن تسجيل الدخول`);
+        
+        // تعبئة حقول تسجيل الدخول تلقائياً
+        document.getElementById('loginPhone').value = adminPhone;
+        document.getElementById('loginPassword').value = "010224";
+        
     } catch(e) {
-        alert("خطأ: " + e.message);
+        alert("❌ خطأ: " + e.message);
     }
 });
 </script>
